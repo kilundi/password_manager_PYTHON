@@ -1,38 +1,40 @@
----
+# Password Manager with Encryption
 
-# Password Manager
+This Python script serves as a simple password manager with an added layer of security through encryption. The script utilizes the `cryptography` library and specifically the `Fernet` symmetric encryption scheme.
 
-This is a basic password manager script written in Python, utilizing the `cryptography` library's `Fernet` for encryption.
+## Setup
 
-## Features:
+Before running the password manager, you need to generate a secret key. This key will be used for encryption and decryption. Execute the following code to generate the key:
 
-1. **Key Generation:**
-    - The script generates a secret key using `Fernet.generate_key()` and stores it in a file named `secret_key.key`.
+```python
+from cryptography.fernet import Fernet
 
-2. **Adding Passwords:**
-    - Users can add new passwords by providing a username and password. The passwords are encrypted using the generated key and stored in a file named `password.txt`.
+def write_key():
+    key = Fernet.generate_key()
+    with open('secret_key.key', 'wb') as key_file:
+        key_file.write(key)
+        print("Key written to secret_key.key")
 
-3. **Viewing Passwords:**
-    - Users can view existing passwords. The stored passwords are decrypted using the generated key and displayed in a readable format.
+write_key()
+```
 
-## How to Use:
+**Note:** Ensure you run this code only once, and keep the generated key (`secret_key.key`) secure.
 
-1. **Key Generation:**
-    - The script automatically generates a secret key and writes it to `secret_key.key` the first time it is run.
+## Usage
 
-2. **Adding Passwords:**
-    - Run the script and choose the option to add a new password.
-    - Enter the username and password when prompted.
+1. Run the script and set your master password when prompted.
+2. To add a new password, choose the "add" option and provide the username and password.
+3. To view existing passwords, choose the "view" option.
+4. To exit the password manager, enter "q" or "quit" when prompted.
 
-3. **Viewing Passwords:**
-    - Run the script and choose the option to view existing passwords.
-    - Enter the master password when prompted.
+## Security
 
-4. **Quitting:**
-    - To exit the script, choose the option to quit by entering 'q' or 'quit'.
+The master password is encrypted and stored in the `master_password.txt` file. The passwords added to the manager are also encrypted using the Fernet key.
 
-## Security Note:
+## Access Control
 
-- The master password provided during the script execution is used to enhance the security of the stored passwords. Make sure to remember your master password as it is crucial for decrypting passwords.
+Access to the password manager is controlled by entering the correct master password at the beginning of the script. Ensure you remember this master password to access your stored passwords.
 
----
+## Caution
+
+Handle the `secret_key.key` file with care, as it is crucial for encrypting and decrypting passwords. Losing this key may result in permanent data loss.
