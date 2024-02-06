@@ -9,6 +9,7 @@ def write_key():
 # Uncomment the next line to generate and write the key only once
 # write_key()
 
+
 def load_key():
     with open('secret_key.key', 'rb') as key_file:
         key = key_file.read()
