@@ -68,7 +68,7 @@ def write_master_psw():
         f.write(f"{ferMaster.encrypt(master_password.encode()).decode()}\n")
     print("\n")
     print("Master password set successfully")
-    # security_question()
+
     read_security_question()
 
 def  read_master_psw():
@@ -80,7 +80,7 @@ def  read_master_psw():
             if f.read().strip() =="":
                 print("Master password is not set")
                 write_master_psw()
-                #  security_question()
+
 
             else:
                 f.seek(0)
@@ -91,15 +91,13 @@ def  read_master_psw():
 
 master_password=read_master_psw()
 
-# print(master_password)
-
 main_master_psw=input("Enter  the master password to proceed: ").lower()
 
 if  main_master_psw==master_password:
     print("\nAccess Granted\n")
 
 
-    key=load_key() #+  master_password.encode()
+    key=load_key()
     fer=Fernet(key)
 
 
