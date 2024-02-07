@@ -47,6 +47,24 @@ This Python script serves as a basic password manager that focuses on security t
 4. **Security Measures:**
    - The script employs encryption and decryption techniques to ensure the security of sensitive information.
 
+## Setup
+
+Before running the password manager, you need to generate a secret key. This key will be used for encryption and decryption. Execute the following code to generate the key:
+
+```python
+from cryptography.fernet import Fernet
+
+def write_key():
+    key = Fernet.generate_key()
+    with open('secret_key.key', 'wb') as key_file:
+        key_file.write(key)
+        print("Key written to secret_key.key")
+
+write_key()
+```
+
+**Note:** Ensure you run this code only once, and keep the generated key (`secret_key.key`) secure.
+
 ## File Structure
 
 - **secret_key.key:** Contains the secret key generated for encryption.
