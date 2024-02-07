@@ -1,5 +1,6 @@
 
 from cryptography.fernet import  Fernet
+import os
 
 '''
 def write_key():
@@ -13,6 +14,7 @@ write_key()
 
 
 
+
 def load_key():
     file=open('secret_key.key','rb')
     key=file.read()
@@ -21,28 +23,77 @@ def load_key():
 master=load_key()
 ferMaster=Fernet(master)
 
+def security_question():
+    print("\n")
+    print("Please set a security question")
+    print("\n")
+    security_questions = input("What's your pet: ").lower()
+    with open('security_questions.txt', 'w') as f:
+        f.write(f"{ferMaster.encrypt(security_questions.encode()).decode()}\n")
+    print("Security question set successfully")
+    print("\n")
+
+def read_security_question():
+    file_path ='security_questions.txt'
+    if not os.path.exists(file_path):
+        print("\n")
+        print(f"'{file_path}' is not available.")
+        print("\n")
+        security_question()
+
+    else:
+        with open('security_questions.txt', 'r') as f:
+            if f.read().strip()=="":
+                print("\n")
+                print("Security question's not set: ")
+                security_question()
+            else:
+                f.seek(0)
+                for line in f:
+                    security_answer=ferMaster.decrypt(line.encode()).decode()
+                    return security_answer
+
+def compare_security_answer():
+    answer=input("Whats your pet: ").lower()
+    if answer==read_security_question():
+        write_master_psw()
+    else:
+        print("\n")
+        print(f"Sorry {answer} doesn't match the expected answer.")
+        quit()
+
 def write_master_psw():
     master_password = input("Set your Master Password: ").lower()
-    with open('master_password.txt', 'a') as f:
+    with open('master_password.txt', 'w') as f:
         f.write(f"{ferMaster.encrypt(master_password.encode()).decode()}\n")
-# write_master_psw()
+    print("\n")
+    print("Master password set successfully")
+    # security_question()
+    read_security_question()
+
 def  read_master_psw():
-     with open('master_password.txt', 'r') as f:
-        if f.read().strip() =="":
-             print("Master password is not set")
-             write_master_psw()
-        else:
-            f.seek(0)
-            for line in f:
-                password=ferMaster.decrypt(line.strip().encode()).decode()
-            return password
+     file_path='master_password.txt'
+     if not os.path.isfile(file_path):
+         write_master_psw()
+     else:
+        with open('master_password.txt', 'r') as f:
+            if f.read().strip() =="":
+                print("Master password is not set")
+                write_master_psw()
+                #  security_question()
+
+            else:
+                f.seek(0)
+                for line in f:
+                    password=ferMaster.decrypt(line.strip().encode()).decode()
+                return password
 
 
 master_password=read_master_psw()
 
 # print(master_password)
 
-main_master_psw=input("Enter  the master password to proceed:").lower()
+main_master_psw=input("Enter  the master password to proceed: ").lower()
 
 if  main_master_psw==master_password:
     print("\nAccess Granted\n")
@@ -62,12 +113,23 @@ if  main_master_psw==master_password:
             f.write(f"{username} : {fer.encrypt(password.encode()).decode()} \n".format())
 
     def view():
-        with open('password.txt', 'r') as f:
-            print("\n\nViewing Passwords:\n---------------------")
-            for line in f:
-                data=line.rstrip()
-                user, passw=data.split(" : ")
-                print(f"User: {user}, Password: {fer.decrypt(passw.encode()).decode()}")
+        file_path ='password.txt'
+        if not os.path.exists(file_path):
+            print(f"'{file_path}' is not available.")
+            add()
+        else:
+            with open('password.txt', 'r') as f:
+                if f.read().strip( ) == '':
+                    print("File is empty.\nAdd a record first.")
+                    add()
+                else:
+                    print("\n\nViewing Passwords:\n---------------------")
+                    f.seek(0)
+                    for line in f:
+                        data=line.rstrip()
+                        user, passw=data.split(" : ")
+                        print(f"User: {user}, Password: {fer.decrypt(passw.encode()).decode()} \n")
+                    print("\n")
     while True:
         mode=input("Would you want to add new password or view existing ones (view or add or q or quit): ").lower()
 
@@ -83,8 +145,14 @@ if  main_master_psw==master_password:
             continue
 
 else:
+    print("\n")
     print("\nWrong Password!\n")
-    exit()
+    print("\n")
+    reset_psw=input("Do you want to Reset the Master Password? (y/N): ").lower()
+    if reset_psw=='y':
+        compare_security_answer()
+    elif  reset_psw == 'n':
+        exit()
 
 
 
